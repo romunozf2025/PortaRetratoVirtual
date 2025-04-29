@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Photo Frame with Music</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .frame-vertical {
+      width: 300px;
+      height: 450px;
+    }
+    .frame-horizontal {
+      width: 450px;
+      height: 300px;
+    }
+    .frame {
+      border: 12px solid #4a5568; /* Tailwind gray-700 */
+      border-radius: 1rem;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      overflow: hidden;
+      background: #1a202c; /* Tailwind gray-900 */
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    button:focus {
+      outline: 2px solid #3182ce; /* Tailwind blue-600 */
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">Digital Photo Frame with Music</h1>
+
+  <div class="flex flex-col md:flex-row md:space-x-8 w-full max-w-4xl">
+    <div class="flex flex-col items-center space-y-4 md:w-1/2">
+      <div id="photo-frame" class="frame frame-vertical mb-4 bg-gray-800">
+        <span id="placeholder-text" class="text-gray-400 select-none">No image selected</span>
+        <img id="photo" src="" alt="Selected photo" class="hidden" />
+      </div>
+      <div class="flex space-x-4">
+        <label for="image-input" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition">
+          <i class="fas fa-image mr-2"></i> Insertar Imágenes
+        </label>
+        <input type="file" id="image-input" accept="image/*" multiple class="hidden" />
+        <button id="start-slideshow" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow transition">
+          Iniciar Presentación
+        </button>
+        <button id="stop-slideshow" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow transition hidden">
+          Detener Presentación
+        </button>
+        <button id="toggle-frame" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition" aria-pressed="false" aria-label="Toggle frame orientation">
+          <i class="fas fa-arrows-alt-v"></i> Marco Vertical
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center space-y-4 md:w-1/2 mt-8 md:mt-0">
+      <audio id="audio-player" controls class="w-full rounded shadow bg-white">
+        Your browser does not support the audio element.
+      </audio>
+      <label for="music-input" class="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow transition w-full text-center">
+        <i class="fas fa-music mr-2"></i> Insertar Música
+      </label>
+      <input type="file" id="music-input" accept="audio/*" class="hidden" />
+    </div>
+  </div>
+
+  <script>
+    const imageInput = document.getElementById('image-input');
+    const photo = document.getElementById('photo');
+    const placeholderText = document.getElementById('placeholder-text');
+    const photoFrame = document.getElementById('photo-frame');
+    const toggleFrameBtn = document.getElementById('toggle-frame');
+    const audioPlayer = document.getElementById('audio-player');
+    const musicInput = document.getElementById('music-input');
+    const startSlideshowBtn = document.getElementById('start-slideshow');
+    const stopSlideshowBtn = document.getElementById('stop-slideshow');
+
+    let isVertical = true;
+    let images = [];
+    let currentIndex = 0;
+    let slideshowInterval;
+
+    imageInput.addEventListener('change', (e) => {
+      images = Array.from(e.target.files).map(file => URL.createObjectURL(file));
+      if (images.length > 0) {
+        currentIndex = 0;
+        showImage(currentIndex);
+        placeholderText.style.display = 'none';
+      }
+    });
+
+    function showImage(index) {
+      if (images.length > 0) {
+        photo.src = images[index];
+        photo.classList.remove('hidden');
+        adjustFrameSize(images[index]);
+      }
+    }
+
+    function adjustFrameSize(imageSrc) {
+      const img = new Image();
+      img.src = imageSrc;
+      img.onload = () => {
+        if (img.width > img.height) {
+          photoFrame.classList.remove('frame-vertical');
+          photoFrame.classList.add('frame-horizontal');
+        } else {
+          photoFrame.classList.remove('frame-horizontal');
+          photoFrame.classList.add('frame-vertical');
+        }
+      };
+    }
+
+    startSlideshowBtn.addEventListener('click', () => {
+      if (images.length > 0) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = setInterval(() => {
+          currentIndex = (currentIndex + 1) % images.length;
+          showImage(currentIndex);
+        }, 7000); // Cambia la imagen cada 7 segundos
+        startSlideshowBtn.classList.add('hidden');
+        stopSlideshowBtn.classList.remove('hidden');
+      }
+    });
+
+    stopSlideshowBtn.addEventListener('click', () => {
+      clearInterval(slideshowInterval);
+      stopSlideshowBtn.classList.add('hidden');
+      startSlideshowBtn.classList.remove('hidden');
+    });
+
+    toggleFrameBtn.addEventListener('click', () => {
+      isVertical = !isVertical;
+      if (isVertical) {
+        photoFrame.classList.remove('frame-horizontal');
+        photoFrame.classList.add('frame-vertical');
+        toggleFrameBtn.innerHTML = '<i class="fas fa-arrows-alt-v"></i> Marco Vertical';
+        toggleFrameBtn.setAttribute('aria-pressed', 'false');
+      } else {
+        photoFrame.classList.remove('frame-vertical');
+        photoFrame.classList.add('frame-horizontal');
+        toggleFrameBtn.innerHTML = '<i class="fas fa-arrows-alt-h"></i> Marco Horizontal';
+        toggleFrameBtn.setAttribute('aria-pressed', 'true');
+      }
+    });
+
+    musicInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        audioPlayer.src = url;
+        audioPlayer.play();
+      }
+    });
+  </script>
+</body>
+</html>
