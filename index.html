@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Digital Photo Frame with Music</title>
+  <title>Marco de Fotos Digital con Música</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -43,13 +43,13 @@
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
-  <h1 class="text-3xl font-bold mb-6 text-gray-800">Digital Photo Frame with Music</h1>
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">Marco de Fotos Digital con Música</h1>
 
   <div class="flex flex-col md:flex-row md:space-x-8 w-full max-w-4xl">
     <div class="flex flex-col items-center space-y-4 md:w-1/2">
       <div id="photo-frame" class="frame frame-vertical mb-4 bg-gray-800">
-        <span id="placeholder-text" class="text-gray-400 select-none">No image selected</span>
-        <img id="photo" src="" alt="Selected photo" class="hidden" />
+        <span id="placeholder-text" class="text-gray-400 select-none">No se ha seleccionado ninguna imagen</span>
+        <img id="photo" src="" alt="Foto seleccionada" class="hidden" />
       </div>
       <div class="flex space-x-4">
         <label for="image-input" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition">
@@ -62,7 +62,7 @@
         <button id="stop-slideshow" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow transition hidden">
           Detener Presentación
         </button>
-        <button id="toggle-frame" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition" aria-pressed="false" aria-label="Toggle frame orientation">
+        <button id="toggle-frame" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition" aria-pressed="false" aria-label="Cambiar orientación del marco">
           <i class="fas fa-arrows-alt-v"></i> Marco Vertical
         </button>
       </div>
@@ -70,7 +70,7 @@
 
     <div class="flex flex-col items-center space-y-4 md:w-1/2 mt-8 md:mt-0">
       <audio id="audio-player" controls class="w-full rounded shadow bg-white">
-        Your browser does not support the audio element.
+        Tu navegador no soporta el elemento de audio.
       </audio>
       <label for="music-input" class="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow transition w-full text-center">
         <i class="fas fa-music mr-2"></i> Insertar Música
@@ -100,14 +100,14 @@
       if (images.length > 0) {
         currentIndex = 0;
         showImage(currentIndex);
-        placeholderText.style.display = 'none';
+        placeholderText.style.display = 'none'; // Oculta el texto de marcador de posición
       }
     });
 
     function showImage(index) {
       if (images.length > 0) {
         photo.src = images[index];
-        photo.classList.remove('hidden');
+        photo.classList.remove('hidden'); // Asegúrate de que la imagen no esté oculta
         adjustFrameSize(images[index]);
       }
     }
